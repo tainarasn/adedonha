@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react"
-import { View, Text, Button, Alert } from "react-native"
+import { View, Text, Button } from "react-native"
 import { TextInput } from "react-native-paper"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-import { useIo } from "./src/hooks/useIo"
-import { IoProvider } from "./src/context/ioContext"
-import { UserProvider } from "./src/context/userContext"
+interface RoomProps {}
 
-const Screen = () => {
-    const socket = useIo()
+import { io } from "socket.io-client"
+
+const socket = io("http://192.168.15.8:3000")
+
+export const Room: React.FC<RoomProps> = ({}) => {
     const [text, setText] = React.useState("")
 
     const joinRoom = () => {
@@ -27,6 +28,18 @@ const Screen = () => {
         socket.emit("leave-room", data)
     }
 
+    useEffect(() => {
+        socket.on("user-joined", (data) => {
+            const { userId, username } = data
+            console.log(`User joined: ${username} (ID: ${userId})`)
+        })
+
+        socket.on("user-left", (data) => {
+            const { userId, username } = data
+            console.log("User left:", username)
+        })
+    }, [])
+
     return (
         <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", gap: 15 }}>
             <TextInput
@@ -40,15 +53,5 @@ const Screen = () => {
             <Button title="Entrar na sala" onPress={joinRoom} />
             <Button title="Sair da sala" onPress={leaveRoom} />
         </View>
-    )
-}
-
-export default function App() {
-    return (
-        <IoProvider>
-            <UserProvider>
-                <Screen />
-            </UserProvider>
-        </IoProvider>
     )
 }
