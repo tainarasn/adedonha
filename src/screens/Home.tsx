@@ -13,7 +13,6 @@ export const Home: React.FC<HomeProps> = ({ navigation }) => {
     const maxHeight = Dimensions.get("window").height
     const maxWidth = Dimensions.get("window").height
     return (
-        // <ImageBackground source={images.background} style={{ flex: 1 }} resizeMode="stretch">
         <View style={{ paddingVertical: 10, alignItems: "center" }}>
             <Image source={images.studio} style={{ width: 120, height: 160, resizeMode: "contain" }} />
             <View style={{ alignItems: "center", paddingTop: 95 }}>
@@ -22,12 +21,11 @@ export const Home: React.FC<HomeProps> = ({ navigation }) => {
                     <Button mode="contained" style={{ width: "100%" }} onPress={() => navigation.navigate("Room")}>
                         Jogar
                     </Button>
-                    <Button buttonColor={colors.button2} onPress={() => navigation.navigate("Room")}>
+                    <Button buttonColor={colors.button2} onPress={() => navigation.navigate("")}>
                         Sair
                     </Button>
                 </View>
             </View>
         </View>
-        // </ImageBackground>
     )
 }

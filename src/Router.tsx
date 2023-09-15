@@ -14,7 +14,6 @@ export const Routes: React.FC<RouterProps> = ({}) => {
         headerStyle: {
             backgroundColor: "#fff",
         },
-        //headerTintColor: colors.primary,
         headerTitleStyle: {
             fontWeight: "bold",
         },
