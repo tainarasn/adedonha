@@ -6,7 +6,7 @@ import { Room } from "./screens/Room"
 
 interface RouterProps {}
 
-export const Router: React.FC<RouterProps> = ({}) => {
+export const Routes: React.FC<RouterProps> = ({}) => {
     const Stack = createNativeStackNavigator()
 
     return (
