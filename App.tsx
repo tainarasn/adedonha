@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { PaperProvider } from "react-native-paper"
 import { Routes } from "./src/Router"
-import { ImageBackground, StyleSheet } from "react-native"
-import images from "./src/images"
+import { theme } from "./src/style/theme"
+import * as Font from "expo-font"
 
 export default function App() {
-    console.log("Caminho da imagem:", images.background)
     return (
-        <PaperProvider>
-            <ImageBackground source={images.background} style={{ flex: 1 }}>
-                <Routes />
-            </ImageBackground>
+        <PaperProvider theme={theme}>
+            <Routes />
         </PaperProvider>
     )
 }

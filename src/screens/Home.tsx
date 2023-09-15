@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from "react"
-import { View, Text, Button } from "react-native"
+import { View, Text, ImageBackground, Dimensions, Image } from "react-native"
 import { NavigationProp } from "@react-navigation/native"
-import { TextInput } from "react-native-paper"
-import { SafeAreaView } from "react-native-safe-area-context"
+import images from "../images"
+import { colors } from "../style/colors"
+import { Button } from "react-native-paper"
 
 interface HomeProps {
     navigation: NavigationProp<any, any>
 }
 
-import { io } from "socket.io-client"
-
 export const Home: React.FC<HomeProps> = ({ navigation }) => {
+    const maxHeight = Dimensions.get("window").height
+    const maxWidth = Dimensions.get("window").height
     return (
-        <View>
-            <Text>Tela 1</Text>
-            <Button title="Ir para a Tela 2" onPress={() => navigation.navigate("Room")} />
+        // <ImageBackground source={images.background} style={{ flex: 1 }} resizeMode="stretch">
+        <View style={{ paddingVertical: 10, alignItems: "center" }}>
+            <Image source={images.studio} style={{ width: 120, height: 160, resizeMode: "contain" }} />
+            <View style={{ alignItems: "center", paddingTop: 95 }}>
+                <Image source={images.logo} style={{ width: 265, height: 160, resizeMode: "contain" }} />
+                <View style={{ gap: 10 }}>
+                    <Button mode="contained" style={{ width: "100%" }} onPress={() => navigation.navigate("Room")}>
+                        Jogar
+                    </Button>
+                    <Button buttonColor={colors.button2} onPress={() => navigation.navigate("Room")}>
+                        Sair
+                    </Button>
+                </View>
+            </View>
         </View>
+        // </ImageBackground>
     )
 }
