@@ -9,11 +9,11 @@ import { UserProvider } from "./src/context/userContext"
 export default function App() {
     return (
         <PaperProvider theme={theme}>
-            {/* <IoProvider>
-                <UserProvider> */}
-            <Routes />
-            {/* </UserProvider>
-            </IoProvider> */}
+            <IoProvider>
+                <UserProvider>
+                    <Routes />
+                </UserProvider>
+            </IoProvider>
         </PaperProvider>
     )
 }

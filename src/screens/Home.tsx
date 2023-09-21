@@ -18,10 +18,15 @@ export const Home: React.FC<HomeProps> = ({ navigation }) => {
             <View style={{ alignItems: "center", paddingTop: 95 }}>
                 <Image source={images.logo} style={{ width: 265, height: 160, resizeMode: "contain" }} />
                 <View style={{ gap: 10 }}>
-                    <Button mode="contained" style={{ width: "100%" }} onPress={() => navigation.navigate("Room")}>
+                    <Button mode="contained" style={{ width: 100 }} onPress={() => navigation.navigate("Room")}>
                         Jogar
                     </Button>
-                    <Button buttonColor={colors.button2} onPress={() => navigation.navigate("")}>
+                    <Button
+                        buttonColor={colors.button2}
+                        textColor="#fff"
+                        style={{ width: 100 }}
+                        onPress={() => navigation.navigate("")}
+                    >
                         Sair
                     </Button>
                 </View>
