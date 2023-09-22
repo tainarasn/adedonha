@@ -23,7 +23,7 @@ export const Home: React.FC<HomeProps> = ({ navigation }) => {
                     </Button>
                     <Button
                         buttonColor={colors.button2}
-                        textColor="#fff"
+                        textColor={colors.color.white}
                         style={{ width: 100 }}
                         onPress={() => navigation.navigate("")}
                     >

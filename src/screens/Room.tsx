@@ -1,5 +1,5 @@
 import { NavigationProp } from "@react-navigation/native"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { View, Image, Button } from "react-native"
 import { TextInput, Modal, Text, Portal, Button as ButtonPaper, IconButton } from "react-native-paper"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -16,19 +16,24 @@ interface RoomProps {
 export const Room: React.FC<RoomProps> = ({ navigation }) => {
     const socket = useIo()
     const [users, setUsers] = useState<Array<{ id: string; username: string }>>([])
+    const [userMap, setUserMap] = useState<{ [userID: string]: string }>({})
 
     const [name, setName] = React.useState("")
     const [letter, setLetter] = useState<string | null>(null)
     const [answers, setAnswers] = useState<{ [category: string]: string }>({})
     const [userWord, setUserWord] = useState("")
+    const [allUserAnswers, setAllUserAnswers] = useState<{ [userId: string]: { [category: string]: string } }>({})
 
-    const categories = ["Animal", "País", "Cidade", "Comida", "Profissão", "Nome"]
+    const categories = ["Animal", "País"]
 
     const [isRoundActive, setIsRoundActive] = useState(false) // Estado para rastrear se a rodada está ativa
+    const [gameResults, setGameResults] = useState<{ [userId: string]: number }>({})
+
     const [visibleStop, setVisibleStop] = React.useState(false)
     const [visible, setVisible] = React.useState(true)
     const showModal = () => setVisible(true)
     const hideModal = () => setVisible(false)
+    const answersRef = useRef<{ [category: string]: string }>({})
 
     const containerStyle = {
         backgroundColor: colors.primary,
@@ -56,6 +61,12 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
             setLetter(data.letter)
             setIsRoundActive(true) // Definir a rodada como ativa
         })
+        socket.on("start-game", (data) => {
+            console.log("Starting game:", data) // Log para verificar início do jogo
+            setVisibleStop(true)
+            setLetter(data.letter)
+            setIsRoundActive(true)
+        })
 
         socket.on("game-stopped", () => {
             setLetter(null)
@@ -63,8 +74,10 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
             setIsRoundActive(false) // Definir a rodada como ativa
         })
 
-        socket.on("new-answer", (data: { userId: string; answer: string }) => {
-            // Lidar com a nova resposta aqui (por exemplo, atualizar a UI)
+        socket.on("game-results", (data) => {
+            console.log("Received game results:", data.scores)
+            setGameResults(data.scores)
+            setAllUserAnswers(data.answers)
         })
 
         socket.on("user-joined", (data) => {
@@ -76,12 +89,20 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
             const { userId, username } = data
             console.log("User left:", username)
         })
+
+        // Quando o evento request-answers for recebido, o cliente enviará todas as suas respostas de todos os jogadores:
+        socket.on("request-answers", () => {
+            console.log("Current answers state:", answersRef.current)
+            socket.emit("submit-answer", { roomId: "1", answer: answersRef.current })
+        })
+
         return () => {
             // Desligar os listeners quando o componente for desmontado
             socket.off("user-list")
             socket.off("new-answer")
             socket.off("game-data")
             socket.off("game-stopped")
+            socket.off("request-answers")
         }
     }, [socket])
     return (
@@ -136,14 +157,22 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
                                         margin: 10,
                                         padding: 5,
                                     }}
-                                    onChangeText={(word) => setAnswers((prev) => ({ ...prev, [category]: word }))}
+                                    key={category}
+                                    label={category}
                                     value={answers[category] || ""}
-                                    placeholder={`Palavra com ${letter}`}
+                                    onChangeText={(text) => {
+                                        setAnswers((prev) => {
+                                            const updatedAnswers = { ...prev, [category]: text }
+                                            answersRef.current = updatedAnswers // Atualizar a referência aqui, pegando o input mais atualizado
+                                            return updatedAnswers
+                                        })
+                                    }}
                                 />
                             </View>
                         ))}
                     </View>
                 ) : null}
+
                 {/* Modal para o botão Stop */}
                 {isRoundActive && areAllFieldsFilled && (
                     <Portal>
@@ -161,7 +190,6 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
                                     style={{ marginTop: 30, borderRadius: 100, width: 120, height: 120 }}
                                     onPress={() => {
                                         socket.emit("stop-game", { roomId: "1" })
-                                        // 3. Oculte o modal quando o botão Stop for pressionado
                                         setVisibleStop(false)
                                     }}
                                     iconColor="#fff"
@@ -171,6 +199,14 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
                             </View>
                         </Modal>
                     </Portal>
+                )}
+                {gameResults && Object.keys(gameResults).length > 0 && (
+                    <View>
+                        <Text>Resultados:</Text>
+                        {Object.entries(gameResults).map(([username, score]) => (
+                            <Text key={username}>{`Usuário ${username}: ${score} pontos`}</Text>
+                        ))}
+                    </View>
                 )}
                 {/* <IconButton
                     icon="pause"
