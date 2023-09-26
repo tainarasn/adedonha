@@ -5,6 +5,8 @@ import { useIo } from "../hooks/useIo"
 interface UserContextValue {
     user?: User
     setUser: React.Dispatch<React.SetStateAction<User | undefined>>
+    username?: string
+    setUsername: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
 interface UserProviderProps {
@@ -16,6 +18,7 @@ export const UserContext = createContext<UserContextValue>({} as UserContextValu
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const socket = useIo()
     const [user, setUser] = useState<User>()
+    const [username, setUsername] = useState<string>()
 
     useEffect(() => {
         socket.on("user-joined", (data: User) => {
@@ -32,5 +35,5 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             socket.off("user-left")
         }
     }, [user])
-    return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>
+    return <UserContext.Provider value={{ user, setUser, username, setUsername }}>{children}</UserContext.Provider>
 }

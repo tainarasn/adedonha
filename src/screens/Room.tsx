@@ -8,6 +8,7 @@ import images from "../images"
 import { DrawerJogadores } from "../components/DrawerJogadores"
 import { JoinRoomModal } from "../components/JoinRoomModal"
 import { colors } from "../style/colors"
+import { useUser } from "../hooks/useUser"
 
 interface RoomProps {
     navigation: NavigationProp<any, any>
@@ -15,10 +16,12 @@ interface RoomProps {
 
 export const Room: React.FC<RoomProps> = ({ navigation }) => {
     const socket = useIo()
+    const { username } = useUser()
+    const [roomId, setRoomId] = useState<string | null>(null)
+
     const [users, setUsers] = useState<Array<{ id: string; username: string }>>([])
     const [userMap, setUserMap] = useState<{ [userID: string]: string }>({})
 
-    const [name, setName] = React.useState("")
     const [letter, setLetter] = useState<string | null>(null)
     const [answers, setAnswers] = useState<{ [category: string]: string }>({})
     const [userWord, setUserWord] = useState("")
@@ -43,15 +46,20 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
     // Verificar se todos os campos de texto foram preenchidos
     const areAllFieldsFilled = categories.every((cat) => answers[cat])
 
-    const joinRoom = () => {
-        socket.emit("join-room", { roomId: "1", username: name })
+    const joinRoom = (id: string) => {
+        setRoomId(id)
+        socket.emit("join-room", { roomId: id, username: username })
     }
 
     const leaveRoom = () => {
-        socket.emit("leave-room", { roomId: "1", username: name })
+        if (roomId) {
+            socket.emit("leave-room", { roomId: roomId, username: username })
+            setRoomId(null) // Reset the roomId after leaving
+        }
     }
 
     useEffect(() => {
+        joinRoom("1")
         // Ouvir o evento user-list e atualizar o estado local
         socket.on("user-list", (userList: Array<{ id: string; username: string }>) => {
             setUsers(userList)
@@ -110,38 +118,6 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
             {/* <Image source={images.studio} style={{ width: 120, height: 120, resizeMode: "contain" }} /> */}
             {!isRoundActive && <DrawerJogadores users={users} />}
             <View style={{ flex: 0.8, justifyContent: "center", alignItems: "center", paddingBottom: 80 }}>
-                <View style={{ padding: 100 }}>
-                    <Portal>
-                        <Modal visible={visible} onDismiss={showModal} contentContainerStyle={containerStyle}>
-                            <TextInput
-                                style={{
-                                    height: 40,
-                                    borderColor: "gray",
-                                    borderWidth: 1,
-                                    width: 200,
-                                    margin: 10,
-                                    padding: 5,
-                                }}
-                                onChangeText={(text) => setName(text)}
-                                value={name}
-                                placeholder="Digite seu nome"
-                            />
-                            <ButtonPaper
-                                buttonColor={colors.button2}
-                                textColor={colors.color.white}
-                                onPress={() => {
-                                    joinRoom()
-                                    hideModal()
-                                }}
-                            >
-                                Entrar
-                            </ButtonPaper>
-                        </Modal>
-                    </Portal>
-                    {/* <ButtonPaper style={{ marginTop: 30 }} onPress={showModal}>
-                    Entrar na sala novamente
-                </ButtonPaper> */}
-                </View>
                 {letter ? (
                     <View style={{ alignItems: "center" }}>
                         <Text variant="displayLarge">{letter}</Text>

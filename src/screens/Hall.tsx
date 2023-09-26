@@ -5,21 +5,30 @@ import images from "../images"
 import { colors } from "../style/colors"
 import { Avatar, Button, RadioButton } from "react-native-paper"
 import axios from "axios"
+import { useUser } from "../hooks/useUser"
+import { useIo } from "../hooks/useIo"
 
 interface HallProps {
     navigation: NavigationProp<any, any>
 }
 
 export const Hall: React.FC<HallProps> = ({ navigation }) => {
+    const { username, setUsername } = useUser()
+    const socket = useIo()
+
     const [rooms, setRooms] = useState<string[]>([]) //Estado para armazenar a lista de salas
     const [modalVisible, setModalVisible] = useState(false)
     const [roomName, setRoomName] = useState("")
-    const [username, setUsername] = useState("")
+
     const [privacy, setPrivacy] = useState("public")
 
     const maxHeight = Dimensions.get("window").height
     const maxWidth = Dimensions.get("window").width
 
+    const handleUsernameChange = (newUsername: string) => {
+        setUsername(newUsername)
+        socket.emit("set-username", newUsername)
+    }
     // Criação de nova sala
     const createRoom = async () => {
         try {
@@ -71,9 +80,12 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                         borderRadius: 25,
                         color: colors.color.black,
                     }}
-                    placeholder="Digite seu nome    "
+                    placeholder="Digite seu nome "
                     value={username}
-                    onChangeText={setUsername}
+                    onChangeText={(text) => {
+                        setUsername(text)
+                        socket.emit("update-username", text)
+                    }}
                 />
                 <View style={{ alignItems: "center" }}>
                     <View style={{ gap: 10, width: 170, alignItems: "center" }}>
