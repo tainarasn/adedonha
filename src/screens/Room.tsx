@@ -24,7 +24,7 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
     const [userWord, setUserWord] = useState("")
     const [allUserAnswers, setAllUserAnswers] = useState<{ [userId: string]: { [category: string]: string } }>({})
 
-    const categories = ["Animal", "País"]
+    const categories = ["Animal", "País", "Comida"]
 
     const [isRoundActive, setIsRoundActive] = useState(false) // Estado para rastrear se a rodada está ativa
     const [gameResults, setGameResults] = useState<{ [userId: string]: number }>({})

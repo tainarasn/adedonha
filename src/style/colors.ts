@@ -6,6 +6,7 @@ export const colors = {
     },
     button: "#FCCB31",
     button2: "#8CC751",
+    buttonSave: "#C57237",
     color: {
         white: "#fff",
         black: "#000",

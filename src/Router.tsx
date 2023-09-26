@@ -5,6 +5,8 @@ import { Home } from "./screens/Home"
 import { Room } from "./screens/Room"
 import { Dimensions, ImageBackground, Text } from "react-native"
 import images from "./images"
+import { RoomList } from "./screens/RoomList"
+import { Hall } from "./screens/Hall"
 
 interface RouterProps {}
 
@@ -35,6 +37,8 @@ export const Routes: React.FC<RouterProps> = ({}) => {
             <ImageBackground source={images.background} resizeMode="cover" style={{ flex: 1 }}>
                 <Stack.Navigator initialRouteName="Home" screenOptions={navigator_options}>
                     <Stack.Screen name="Home" component={Home} />
+                    <Stack.Screen name="Hall" component={Hall} />
+                    <Stack.Screen name="RoomList" component={RoomList} />
                     <Stack.Screen name="Room" component={Room} />
                 </Stack.Navigator>
             </ImageBackground>
