@@ -1,7 +1,7 @@
 import { NavigationProp } from "@react-navigation/native"
 import React, { useEffect, useRef, useState } from "react"
-import { View, Image, Button } from "react-native"
-import { TextInput, Modal, Text, Portal, Button as ButtonPaper, IconButton } from "react-native-paper"
+import { View, Image, Button, TextInput } from "react-native"
+import { Modal, Text, Portal, Button as ButtonPaper, IconButton } from "react-native-paper"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useIo } from "../hooks/useIo"
 import images from "../images"
@@ -9,15 +9,24 @@ import { DrawerJogadores } from "../components/DrawerJogadores"
 import { JoinRoomModal } from "../components/JoinRoomModal"
 import { colors } from "../style/colors"
 import { useUser } from "../hooks/useUser"
+import { RouteProp } from "@react-navigation/native"
 
+type RootStackParamList = {
+    Home: undefined
+    RoomList: undefined
+    Room: { roomId: string } // Certifique-se de que "roomId" está definido aqui
+}
+type RoomScreenRouteProp = RouteProp<RootStackParamList, "Room"> // Substitua "RootStackParamList" pelo nome de sua pilha de navegação
 interface RoomProps {
     navigation: NavigationProp<any, any>
+    route: RoomScreenRouteProp // Adicione esta prop para receber o roomId
 }
 
-export const Room: React.FC<RoomProps> = ({ navigation }) => {
+export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
     const socket = useIo()
     const { username } = useUser()
-    const [roomId, setRoomId] = useState<string | null>(null)
+    //const [roomId, setRoomId] = useState<string | null>(null)
+    const roomid = route.params.roomId
 
     const [users, setUsers] = useState<Array<{ id: string; username: string }>>([])
     const [userMap, setUserMap] = useState<{ [userID: string]: string }>({})
@@ -47,19 +56,19 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
     const areAllFieldsFilled = categories.every((cat) => answers[cat])
 
     const joinRoom = (id: string) => {
-        setRoomId(id)
+        //setRoomId(id)
         socket.emit("join-room", { roomId: id, username: username })
     }
 
     const leaveRoom = () => {
-        if (roomId) {
-            socket.emit("leave-room", { roomId: roomId, username: username })
-            setRoomId(null) // Reset the roomId after leaving
+        if (roomid) {
+            socket.emit("leave-room", { roomId: roomid, username: username })
+            //setRoomId(null) // Reset the roomId after leaving
         }
     }
 
     useEffect(() => {
-        joinRoom("1")
+        joinRoom(roomid)
         // Ouvir o evento user-list e atualizar o estado local
         socket.on("user-list", (userList: Array<{ id: string; username: string }>) => {
             setUsers(userList)
@@ -100,7 +109,7 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
         // Quando o evento request-answers for recebido, o cliente enviará todas as suas respostas de todos os jogadores:
         socket.on("request-answers", () => {
             console.log("Current answers state:", answersRef.current)
-            socket.emit("submit-answer", { roomId: "1", answer: answersRef.current })
+            socket.emit("submit-answer", { roomId: roomid, answer: answersRef.current })
         })
 
         return () => {
@@ -116,35 +125,64 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, alignItems: "center", padding: 10, gap: 30 }}>
             {/* <Image source={images.studio} style={{ width: 120, height: 120, resizeMode: "contain" }} /> */}
             {!isRoundActive && <DrawerJogadores users={users} />}
-            <View style={{ flex: 0.8, justifyContent: "center", alignItems: "center", paddingBottom: 80 }}>
+            <View
+                style={{
+                    flex: 1,
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingBottom: 55,
+                }}
+            >
                 {letter ? (
-                    <View style={{ alignItems: "center" }}>
-                        <Text variant="displayLarge">{letter}</Text>
-                        {categories.map((category) => (
-                            <View key={category}>
-                                <Text>{category}:</Text>
-                                <TextInput
-                                    style={{
-                                        height: 40,
-                                        borderColor: "gray",
-                                        borderWidth: 1,
-                                        width: 200,
-                                        margin: 10,
-                                        padding: 5,
-                                    }}
-                                    key={category}
-                                    label={category}
-                                    value={answers[category] || ""}
-                                    onChangeText={(text) => {
-                                        setAnswers((prev) => {
-                                            const updatedAnswers = { ...prev, [category]: text }
-                                            answersRef.current = updatedAnswers // Atualizar a referência aqui, pegando o input mais atualizado
-                                            return updatedAnswers
-                                        })
-                                    }}
-                                />
-                            </View>
-                        ))}
+                    <View style={{ justifyContent: "center", alignItems: "center" }}>
+                        <Text
+                            variant="displayLarge"
+                            style={{
+                                paddingTop: 70,
+                                color: colors.background.modalY,
+                                fontWeight: "900",
+                                fontSize: 90,
+                            }}
+                        >
+                            {letter}
+                        </Text>
+                        <View
+                            style={{
+                                width: "75%",
+                                padding: 15,
+                                alignItems: "center",
+                                backgroundColor: colors.primary,
+                                borderRadius: 15,
+                            }}
+                        >
+                            {categories.map((category) => (
+                                <View key={category}>
+                                    <Text style={{ color: colors.color.white, fontWeight: "600" }}>{category}:</Text>
+                                    <TextInput
+                                        style={{
+                                            width: 200,
+                                            margin: 8,
+                                            height: 35,
+                                            paddingHorizontal: 0,
+                                            textAlign: "center",
+                                            borderRadius: 25,
+                                            color: colors.color.black,
+                                            backgroundColor: "#fff",
+                                        }}
+                                        key={category}
+                                        value={answers[category] || ""}
+                                        onChangeText={(text) => {
+                                            setAnswers((prev) => {
+                                                const updatedAnswers = { ...prev, [category]: text }
+                                                answersRef.current = updatedAnswers // Atualizar a referência aqui, pegando o input mais atualizado
+                                                return updatedAnswers
+                                            })
+                                        }}
+                                    />
+                                </View>
+                            ))}
+                        </View>
                     </View>
                 ) : null}
 
@@ -154,7 +192,7 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
                         <Modal visible={visibleStop} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                             <View
                                 style={{
-                                    flex: 1,
+                                    flex: 0.8,
                                     justifyContent: "center",
                                     alignItems: "center",
                                     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -165,7 +203,7 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
                                     style={{ marginTop: 30, borderRadius: 100, width: 120, height: 120 }}
                                     onPress={() => {
                                         socket.emit("request-answers")
-                                        socket.emit("stop-game", { roomId: "1" })
+                                        socket.emit("stop-game", { roomId: roomid })
                                         setVisibleStop(false)
                                     }}
                                     iconColor="#fff"
@@ -196,13 +234,31 @@ export const Room: React.FC<RoomProps> = ({ navigation }) => {
                 /> */}
 
                 {!isRoundActive && (
-                    <Button
-                        title="Play"
-                        onPress={() => {
-                            socket.emit("start-game", { roomId: "1" })
-                            setVisibleStop(true)
-                        }}
-                    />
+                    <View style={{ width: "100%", gap: 10, alignItems: "center" }}>
+                        <ButtonPaper
+                            buttonColor={colors.button2}
+                            textColor={colors.color.white}
+                            style={{ borderRadius: 15, width: "50%" }}
+                            onPress={() => {
+                                socket.emit("start-game", { roomId: roomid })
+                                setVisibleStop(true)
+                            }}
+                        >
+                            Iniciar
+                        </ButtonPaper>
+                        <ButtonPaper
+                            mode="contained"
+                            buttonColor={colors.background.modalY}
+                            textColor={colors.color.white}
+                            style={{ borderRadius: 15, width: "50%" }}
+                            onPress={() => {
+                                socket.emit("leave-room", { roomId: roomid })
+                                navigation.navigate("RoomList")
+                            }}
+                        >
+                            Sair da Sala
+                        </ButtonPaper>
+                    </View>
                 )}
 
                 {/* <Button title="Sair da sala" onPress={leaveRoom} /> */}
