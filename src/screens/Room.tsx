@@ -1,6 +1,6 @@
 import { NavigationProp } from "@react-navigation/native"
 import React, { useEffect, useRef, useState } from "react"
-import { View, Image, Button, TextInput } from "react-native"
+import { View, Image, Button, TextInput, Modal as ModalN } from "react-native"
 import { Modal, Text, Portal, Button as ButtonPaper, IconButton } from "react-native-paper"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useIo } from "../hooks/useIo"
@@ -45,12 +45,10 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
     const [visible, setVisible] = React.useState(true)
     const showModal = () => setVisible(true)
     const hideModal = () => setVisible(false)
-    const answersRef = useRef<{ [category: string]: string }>({})
+    const [showStopModal, setShowStopModal] = useState(false)
+    const [stopActivatedBy, setStopActivatedBy] = useState("")
 
-    const containerStyle = {
-        backgroundColor: colors.primary,
-        padding: 10,
-    }
+    const answersRef = useRef<{ [category: string]: string }>({})
 
     // Verificar se todos os campos de texto foram preenchidos
     const areAllFieldsFilled = categories.every((cat) => answers[cat])
@@ -111,6 +109,11 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
             console.log("Current answers state:", answersRef.current)
             socket.emit("submit-answer", { roomId: roomid, answer: answersRef.current })
         })
+        socket.on("stop-activated", (data) => {
+            console.log("Received stop-activated with data:", data)
+            setStopActivatedBy(data.username)
+            setShowStopModal(true)
+        })
 
         return () => {
             // Desligar os listeners quando o componente for desmontado
@@ -119,8 +122,10 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
             socket.off("game-data")
             socket.off("game-stopped")
             socket.off("request-answers")
+            socket.off("stop-activated")
         }
     }, [socket])
+
     return (
         <SafeAreaView style={{ flex: 1, alignItems: "center", padding: 10, gap: 30 }}>
             {/* <Image source={images.studio} style={{ width: 120, height: 120, resizeMode: "contain" }} /> */}
@@ -189,13 +194,13 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                 {/* Modal para o botão Stop */}
                 {isRoundActive && areAllFieldsFilled && (
                     <Portal>
-                        <Modal visible={visibleStop} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+                        <Modal visible={visibleStop} onDismiss={hideModal}>
                             <View
                                 style={{
                                     flex: 0.8,
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                    backgroundColor: "red",
                                 }}
                             >
                                 <IconButton
@@ -203,35 +208,50 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                                     style={{ marginTop: 30, borderRadius: 100, width: 120, height: 120 }}
                                     onPress={() => {
                                         socket.emit("request-answers")
-                                        socket.emit("stop-game", { roomId: roomid })
+                                        socket.emit("stop-game", { roomId: roomid, username: username })
                                         setVisibleStop(false)
                                     }}
                                     iconColor="#fff"
                                     containerColor="red"
                                     size={70}
                                 />
+
+                                <Image source={images.logo} style={{ width: 240 }} resizeMode="contain" />
                             </View>
                         </Modal>
                     </Portal>
                 )}
+
+                {showStopModal && isRoundActive && (
+                    <ModalN visible={showStopModal} transparent={true} onRequestClose={() => setShowStopModal(false)}>
+                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 50 }}>
+                            <View
+                                style={{
+                                    height: "50%",
+                                    padding: 30,
+                                    borderRadius: 10,
+                                    backgroundColor: colors.background.modalY,
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 40,
+                                }}
+                            >
+                                <Image source={require("../../assets/stop.png")} />
+                                <View style={{ backgroundColor: "#fff", borderRadius: 15, padding: 15 }}>
+                                    <Text style={{ fontSize: 20, fontWeight: "600" }}>{stopActivatedBy} deu stop!</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </ModalN>
+                )}
                 {gameResults && Object.keys(gameResults).length > 0 && (
                     <View>
-                        <Text>Resultados:</Text>
+                        <Text >Resultados:</Text>
                         {Object.entries(gameResults).map(([username, score]) => (
-                            <Text key={username}>{`Usuário ${username}: ${score} pontos`}</Text>
+                            <Text  key={username}>{`Usuário ${username}: ${score} pontos`}</Text>
                         ))}
                     </View>
                 )}
-                {/* <IconButton
-                    icon="pause"
-                    style={{ marginTop: 30, borderRadius: 100, width: 120, height: 120 }}
-                    onPress={() => {
-                        socket.emit("stop-game", { roomId: "1" })
-                    }}
-                    iconColor="#fff"
-                    containerColor="red"
-                    size={70}
-                /> */}
 
                 {!isRoundActive && (
                     <View style={{ width: "100%", gap: 10, alignItems: "center" }}>
@@ -260,8 +280,6 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                         </ButtonPaper>
                     </View>
                 )}
-
-                {/* <Button title="Sair da sala" onPress={leaveRoom} /> */}
             </View>
         </SafeAreaView>
     )

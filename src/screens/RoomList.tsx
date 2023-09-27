@@ -31,7 +31,14 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
             <Image source={images.studio} style={{ width: 120, height: 160, resizeMode: "center", alignItems: "center" }} />
 
-            <Text style={{ fontSize: 22, marginBottom: 20, fontWeight: "800", color: colors.primary }}>
+            <Text
+                style={{
+                    fontSize: 22,
+                    marginBottom: 20,
+                    fontWeight: "800",
+                    color: colors.primary,
+                }}
+            >
                 SALAS DISPONÍVEIS
             </Text>
             <FlatList

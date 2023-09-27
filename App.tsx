@@ -6,6 +6,13 @@ import * as Font from "expo-font"
 import { IoProvider } from "./src/context/ioContext"
 import { UserProvider } from "./src/context/userContext"
 
+
+async function loadFonts() {
+    await Font.loadAsync({
+        KGPrimaryPenmanship: require("./assets/fonts/KGPrimaryPenmanship.ttf"),
+    })
+}
+
 export default function App() {
     return (
         <PaperProvider theme={theme}>
