@@ -13,7 +13,8 @@ const IoContext = createContext<IoContextValue>({} as IoContextValue)
 export default IoContext
 
 // const io = ioSocket("ws://localhost:4104")
-const io = ioSocket("http://192.168.15.4:3000")
+//const io = ioSocket("http://192.168.15.4:3000")
+const io = ioSocket("http://192.168.15.8:3000")
 
 export const IoProvider: React.FC<IoProviderProps> = ({ children }) => {
     useEffect(() => {

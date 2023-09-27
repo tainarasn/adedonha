@@ -18,8 +18,8 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
     useEffect(() => {
         async function fetchRooms() {
             try {
-                //const response = await axios.get("http://192.168.15.8:3000/rooms")
-                const response = await axios.get("http://192.168.15.4:3000/rooms")
+                const response = await axios.get("http://192.168.15.8:3000/rooms")
+                //const response = await axios.get("http://192.168.15.4:3000/rooms")
                 setRooms(response.data.rooms)
             } catch (error) {
                 console.error("Error fetching rooms:", error)

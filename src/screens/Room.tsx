@@ -84,7 +84,6 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
             setLetter(data.letter)
             setIsRoundActive(true)
         })
-
         socket.on("game-stopped", () => {
             setLetter(null)
             setUserWord("")
@@ -195,6 +194,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                                     icon="pause"
                                     style={{ marginTop: 30, borderRadius: 100, width: 120, height: 120 }}
                                     onPress={() => {
+                                        socket.emit("request-answers")
                                         socket.emit("stop-game", { roomId: "1" })
                                         setVisibleStop(false)
                                     }}
@@ -223,6 +223,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                             style={{ borderRadius: 15, width: "50%" }}
                             onPress={() => {
                                 socket.emit("start-game", { roomId: roomid })
+                                console.log("Iniciar button pressed. Emitting start-game event.")
                                 setVisibleStop(true)
                             }}
                         >
