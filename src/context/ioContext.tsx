@@ -13,7 +13,10 @@ const IoContext = createContext<IoContextValue>({} as IoContextValue)
 export default IoContext
 
 // const io = ioSocket("ws://localhost:4104")
+<<<<<<< HEAD
 //const io = ioSocket("http://192.168.15.4:3000")
+=======
+>>>>>>> parent of 5d876d9 (feat: room id correct and random avatar)
 const io = ioSocket("http://192.168.15.8:3000")
 
 export const IoProvider: React.FC<IoProviderProps> = ({ children }) => {

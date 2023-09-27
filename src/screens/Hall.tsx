@@ -25,12 +25,6 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
     const maxHeight = Dimensions.get("window").height
     const maxWidth = Dimensions.get("window").width
 
-    const randomAvatar = (max: number) => {
-        return Math.floor(Math.random() * max)
-    }
-    const randomNumber = randomAvatar(images.avatar.length)
-    const imageSort = images.avatar[randomNumber]
-
     const handleUsernameChange = (newUsername: string) => {
         setUsername(newUsername)
         socket.emit("set-username", newUsername)
@@ -39,7 +33,6 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
     const createRoom = async () => {
         try {
             const response = await axios.post("http://192.168.15.8:3000/create-room", {
-                //const response = await axios.post("http://192.168.15.4:3000/create-room", {
                 name: roomName,
                 privacy: privacy,
             })
@@ -54,7 +47,6 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
         async function fetchRooms() {
             try {
                 const response = await axios.get("http://192.168.15.8:3000/rooms")
-                //const response = await axios.get("http://192.168.15.4:3000/rooms")
                 setRooms(response.data.rooms)
             } catch (error) {
                 console.error("Error fetching rooms:", rooms)
@@ -75,7 +67,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
         >
             <Image source={images.studio} style={{ width: 120, height: 160, resizeMode: "center" }} />
             <View style={{ gap: 30, alignItems: "center" }}>
-                <Avatar.Image size={150} source={imageSort} style={{ alignSelf: "center" }} />
+                <Avatar.Image size={150} source={require("../../assets/avatar/porco.png")} style={{ alignSelf: "center" }} />
                 <TextInput
                     style={{
                         width: 170,
