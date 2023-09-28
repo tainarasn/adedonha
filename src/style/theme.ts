@@ -4,8 +4,6 @@ import { colors } from "./colors"
 export const theme: MD3Theme = {
     ...DefaultTheme,
 
-    //fonts: configureFonts({ config: { fontFamily: "KGPrimaryPenmanshipAlt" } }),
-
     colors: {
         ...DefaultTheme.colors,
         primary: colors.primary,
