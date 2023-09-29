@@ -6,14 +6,26 @@ import * as Font from "expo-font"
 import { IoProvider } from "./src/context/ioContext"
 import { UserProvider } from "./src/context/userContext"
 
-
 async function loadFonts() {
-    await Font.loadAsync({
-        KGPrimaryPenmanship: require("./assets/fonts/KGPrimaryPenmanship.ttf"),
-    })
+    await Font.loadAsync({})
 }
 
 export default function App() {
+    const [fontsLoaded, setFontsLoaded] = useState(false)
+
+    useEffect(() => {
+        async function loadApp() {
+            await loadFonts()
+            setFontsLoaded(true)
+        }
+
+        loadApp()
+    }, [])
+
+    if (!fontsLoaded) {
+        return <></> // Ou qualquer outro indicador de carregamento que você preferir
+    }
+
     return (
         <PaperProvider theme={theme}>
             <IoProvider>

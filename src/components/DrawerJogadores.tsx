@@ -8,15 +8,22 @@ interface DrawerJogadoresProps {
 
 export const DrawerJogadores: React.FC<DrawerJogadoresProps> = ({ users }) => {
     const [active, setActive] = React.useState("")
-
+    console.log("DrawerJogadores users:", users)
+    console.log("Tipo de users:", typeof users)
+    console.log("Valor de users:", users)
     return (
         <Drawer.Section title="" style={{ paddingHorizontal: 30, gap: 13, alignItems: "center" }}>
             {/* Renderizar a lista de usuários */}
-            {users.map((user) => (
-                <Text style={{ fontSize: 18 }} key={user.id}>
-                    {user.username}
-                </Text>
-            ))}
+            {Array.isArray(users) && (
+                <>
+                    {console.log("Rendering users:", users)}
+                    {users.map((user) => (
+                        <Text style={{ fontSize: 25 }} key={user.id}>
+                            {user.username}
+                        </Text>
+                    ))}
+                </>
+            )}
         </Drawer.Section>
     )
 }

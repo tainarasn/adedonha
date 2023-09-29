@@ -23,6 +23,9 @@ interface RoomProps {
 }
 
 export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
+    DrawerJogadores.defaultProps = {
+        users: [],
+    }
     const socket = useIo()
     const { username } = useUser()
     //const [roomId, setRoomId] = useState<string | null>(null)
@@ -125,7 +128,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
             socket.off("stop-activated")
         }
     }, [socket])
-
+    console.log("Room users state:", users)
     return (
         <SafeAreaView style={{ flex: 1, alignItems: "center", padding: 10, gap: 30 }}>
             {/* <Image source={images.studio} style={{ width: 120, height: 120, resizeMode: "contain" }} /> */}
@@ -246,15 +249,50 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                 )}
                 {gameResults && Object.keys(gameResults).length > 0 && (
                     <View>
-                        <Text >Resultados:</Text>
+                        <Text>Resultados:</Text>
                         {Object.entries(gameResults).map(([username, score]) => (
-                            <Text  key={username}>{`Usuário ${username}: ${score} pontos`}</Text>
+                            <Text key={username}>{`Usuário ${username}: ${score} pontos`}</Text>
                         ))}
                     </View>
                 )}
 
                 {!isRoundActive && (
-                    <View style={{ width: "100%", gap: 10, alignItems: "center" }}>
+                    <View
+                        style={{
+                            width: "85%",
+                            gap: 15,
+                            alignItems: "center",
+                            backgroundColor: colors.primary,
+                            flex: 0.8,
+                            borderRadius: 15,
+                            padding: 20,
+                            paddingVertical: 0,
+                            justifyContent: "center",
+                        }}
+                    >
+                        <View
+                            style={{
+                                backgroundColor: "white",
+                                width: "90%",
+                                gap: 15,
+                                alignItems: "center",
+                                flex: 0.8,
+                                borderRadius: 15,
+                                padding: 30,
+                                justifyContent: "center",
+                            }}
+                        >
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{ fontSize: 25 }}>Sala</Text>
+                                <Text style={{ fontWeight: "bold", fontSize: 25 }}>#BOZ</Text>
+                            </View>
+                            <View>
+                                <Text style={{ textAlign: "center", fontSize: 18 }}>
+                                    Jogue com seus amigos. Copie o link abaixo e compartilhe.
+                                </Text>
+                                <IconButton icon="pause" />
+                            </View>
+                        </View>
                         <ButtonPaper
                             buttonColor={colors.button2}
                             textColor={colors.color.white}
