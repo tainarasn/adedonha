@@ -18,8 +18,9 @@ export const Home: React.FC<HomeProps> = ({ navigation }) => {
                 <View style={{ gap: 10, width: 150, alignItems: "center" }}>
                     <Button
                         mode="contained"
-                        style={{ width: "80%", borderRadius: 15 }}
+                        style={{ width: "120%", borderRadius: 30, height: "40%" }}
                         onPress={() => navigation.navigate("Hall")}
+                        labelStyle={{ fontSize: 40, paddingTop: 20 }}
                     >
                         Jogar
                     </Button>

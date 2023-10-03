@@ -67,8 +67,8 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                 alignItems: "center",
                 height: "100%",
                 justifyContent: "center",
-                gap: 60,
-                paddingBottom: 110,
+                gap: 20,
+                paddingBottom: 90,
             }}
         >
             <Image source={images.studio} style={{ width: 120, height: 160, resizeMode: "center" }} />
@@ -77,7 +77,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
 
                 <TextInput
                     style={{
-                        width: 170,
+                        width: 195,
                         borderWidth: 1,
                         borderColor: colors.color.black,
                         marginBottom: 15,
@@ -86,6 +86,8 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                         textAlign: "center",
                         borderRadius: 25,
                         color: colors.color.black,
+                        fontFamily: "KGPrimaryPenmanship",
+                        fontSize: 25,
                     }}
                     placeholder="Digite seu nome "
                     value={username}
@@ -95,12 +97,13 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                     }}
                 />
                 <View style={{ alignItems: "center" }}>
-                    <View style={{ gap: 10, width: 170, alignItems: "center" }}>
+                    <View style={{ gap: 10, width: 240, alignItems: "center" }}>
                         <Button
                             mode="contained"
                             buttonColor={colors.button2}
                             style={{ width: "100%", borderRadius: 15 }}
                             onPress={() => navigation.navigate("RoomList")}
+                            labelStyle={{ fontSize: 30, paddingTop: 12 }}
                         >
                             Sala Aleatória
                         </Button>
@@ -108,6 +111,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                             mode="contained"
                             style={{ width: "100%", borderRadius: 15 }}
                             onPress={() => navigation.navigate("RoomList")}
+                            labelStyle={{ fontSize: 30, paddingTop: 12 }}
                         >
                             Salas
                         </Button>
@@ -116,6 +120,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                             style={{ width: "100%", borderRadius: 15 }}
                             buttonColor={colors.secondary}
                             onPress={() => setModalVisible(true)}
+                            labelStyle={{ fontSize: 30, paddingTop: 12 }}
                         >
                             Criar Sala
                         </Button>
@@ -129,7 +134,15 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 50 }}>
-                    <Text style={{ fontSize: 25, marginBottom: 15, color: colors.secondary, fontWeight: "800" }}>
+                    <Text
+                        style={{
+                            fontSize: 38,
+                            fontFamily: "KGPrimaryPenmanship",
+                            marginBottom: 15,
+                            color: colors.secondary,
+                            fontWeight: "bold",
+                        }}
+                    >
                         Criar Sala
                     </Text>
                     <View
@@ -146,7 +159,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                     >
                         <TextInput
                             style={{
-                                width: "70%",
+                                width: "90%",
                                 marginBottom: 15,
                                 paddingVertical: 10,
                                 paddingHorizontal: 5,
@@ -154,29 +167,56 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                                 borderRadius: 25,
                                 color: colors.color.black,
                                 backgroundColor: "#fff",
+                                fontFamily: "KGPrimaryPenmanship",
+                                fontSize: 25,
                             }}
                             placeholder="Nome da Sala"
                             value={roomName}
                             onChangeText={setRoomName}
                         />
-                        <Text style={{ fontSize: 19, fontWeight: "600", color: colors.color.white }}>Privacidade</Text>
-                        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 15 }}>
+                        <Text
+                            style={{
+                                fontSize: 35,
+                                fontWeight: "600",
+                                color: colors.color.white,
+                                fontFamily: "KGPrimaryPenmanship",
+                            }}
+                        >
+                            Privacidade
+                        </Text>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginBottom: 15,
+                            }}
+                        >
                             <RadioButton
                                 value="public"
                                 color={"checked" ? colors.background.modalY : "white"}
                                 status={privacy === "public" ? "checked" : "unchecked"}
                                 onPress={() => setPrivacy("public")}
                             />
-                            <Text style={{ color: colors.color.white, fontSize: 17 }}>Pública</Text>
+                            <Text style={{ color: colors.color.white, fontSize: 28, fontFamily: "KGPrimaryPenmanship" }}>
+                                Pública
+                            </Text>
                         </View>
-                        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 15 }}>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginBottom: 15,
+                            }}
+                        >
                             <RadioButton
                                 value="private"
                                 color={"checked" ? colors.background.modalY : "white"}
                                 status={privacy === "private" ? "checked" : "unchecked"}
                                 onPress={() => setPrivacy("private")}
                             />
-                            <Text style={{ color: colors.color.white, fontSize: 17 }}>Privada</Text>
+                            <Text style={{ color: colors.color.white, fontSize: 28, fontFamily: "KGPrimaryPenmanship" }}>
+                                Privada
+                            </Text>
                         </View>
                         <View style={{ width: "100%", alignItems: "center", gap: 10 }}>
                             <Button
@@ -184,6 +224,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                                 style={{ width: "50%", borderRadius: 15 }}
                                 buttonColor={colors.buttonSave}
                                 onPress={createRoom}
+                                labelStyle={{ fontSize: 30, paddingTop: 12 }}
                             >
                                 Salvar
                             </Button>
@@ -192,6 +233,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
                                 style={{ width: "40%", borderRadius: 15 }}
                                 buttonColor={colors.buttonSave}
                                 onPress={() => setModalVisible(false)}
+                                labelStyle={{ fontSize: 20, paddingTop: 5 }}
                             >
                                 Voltar
                             </Button>

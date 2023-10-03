@@ -33,10 +33,11 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
 
             <Text
                 style={{
-                    fontSize: 22,
+                    fontSize: 38,
                     marginBottom: 20,
                     fontWeight: "800",
                     color: colors.primary,
+                    fontFamily: "KGPrimaryPenmanship",
                 }}
             >
                 SALAS DISPONÍVEIS
@@ -52,6 +53,7 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
                             style={{ width: "60%", borderRadius: 15, alignSelf: "center" }}
                             buttonColor={colors.primary}
                             onPress={() => navigation.navigate("Room", { roomId: item })}
+                            labelStyle={{ fontSize: 26, paddingTop: 6 }}
                         >
                             {item}
                         </Button>

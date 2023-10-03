@@ -10,6 +10,7 @@ import { JoinRoomModal } from "../components/JoinRoomModal"
 import { colors } from "../style/colors"
 import { useUser } from "../hooks/useUser"
 import { RouteProp } from "@react-navigation/native"
+import { ModalInitRound } from "../components/ModalInitRound"
 
 type RootStackParamList = {
     Home: undefined
@@ -61,13 +62,6 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
         socket.emit("join-room", { roomId: id, username: username })
     }
 
-    const leaveRoom = () => {
-        if (roomid) {
-            socket.emit("leave-room", { roomId: roomid, username: username })
-            //setRoomId(null) // Reset the roomId after leaving
-        }
-    }
-
     useEffect(() => {
         joinRoom(roomid)
         // Ouvir o evento user-list e atualizar o estado local
@@ -102,10 +96,10 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
             console.log(`User joined: ${username} (ID: ${userId})`)
         })
 
-        socket.on("user-left", (data) => {
-            const { userId, username } = data
-            console.log("User left:", username)
-        })
+        // socket.on("user-left", (data) => {
+        //     const { userId, username } = data
+        //     console.log("User left:", username)
+        // })
 
         // Quando o evento request-answers for recebido, o cliente enviará todas as suas respostas de todos os jogadores:
         socket.on("request-answers", () => {
@@ -149,8 +143,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                             style={{
                                 paddingTop: 70,
                                 color: colors.background.modalY,
-                                fontWeight: "900",
-                                fontSize: 90,
+                                fontSize: 100,
                             }}
                         >
                             {letter}
@@ -166,7 +159,16 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                         >
                             {categories.map((category) => (
                                 <View key={category}>
-                                    <Text style={{ color: colors.color.white, fontWeight: "600" }}>{category}:</Text>
+                                    <Text
+                                        style={{
+                                            color: colors.color.white,
+                                            fontWeight: "600",
+                                            fontSize: 23,
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {category}
+                                    </Text>
                                     <TextInput
                                         style={{
                                             width: 200,
@@ -177,6 +179,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                                             borderRadius: 25,
                                             color: colors.color.black,
                                             backgroundColor: "#fff",
+                                            fontSize: 23,
                                         }}
                                         key={category}
                                         value={answers[category] || ""}
@@ -241,7 +244,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                             >
                                 <Image source={require("../../assets/stop.png")} />
                                 <View style={{ backgroundColor: "#fff", borderRadius: 15, padding: 15 }}>
-                                    <Text style={{ fontSize: 20, fontWeight: "600" }}>{stopActivatedBy} deu stop!</Text>
+                                    <Text style={{ fontSize: 35, fontWeight: "600" }}>{stopActivatedBy} deu stop!</Text>
                                 </View>
                             </View>
                         </View>
@@ -259,7 +262,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                 {!isRoundActive && (
                     <View
                         style={{
-                            width: "85%",
+                            width: "75%",
                             gap: 15,
                             alignItems: "center",
                             backgroundColor: colors.primary,
@@ -283,14 +286,14 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                             }}
                         >
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{ fontSize: 25 }}>Sala</Text>
-                                <Text style={{ fontWeight: "bold", fontSize: 25 }}>#BOZ</Text>
+                                <Text style={{ fontSize: 40 }}>Sala</Text>
+                                <Text style={{ fontWeight: "bold", fontSize: 40 }}>#BOZ</Text>
                             </View>
-                            <View>
-                                <Text style={{ textAlign: "center", fontSize: 18 }}>
+                            <View style={{ alignItems: "center", gap: 20 }}>
+                                <Text style={{ textAlign: "center", fontSize: 20 }}>
                                     Jogue com seus amigos. Copie o link abaixo e compartilhe.
                                 </Text>
-                                <IconButton icon="pause" />
+                                <IconButton icon="content-copy" size={38} />
                             </View>
                         </View>
                         <ButtonPaper
@@ -301,20 +304,22 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
                                 socket.emit("start-game", { roomId: roomid })
                                 setVisibleStop(true)
                             }}
+                            labelStyle={{ fontSize: 30, paddingTop: 12 }}
                         >
-                            Iniciar
+                            Vamos lá
                         </ButtonPaper>
                         <ButtonPaper
                             mode="contained"
                             buttonColor={colors.background.modalY}
                             textColor={colors.color.white}
-                            style={{ borderRadius: 15, width: "50%" }}
+                            style={{ borderRadius: 15, width: "30%" }}
+                            labelStyle={{ fontSize: 21 }}
                             onPress={() => {
                                 socket.emit("leave-room", { roomId: roomid })
                                 navigation.navigate("RoomList")
                             }}
                         >
-                            Sair da Sala
+                            Sair
                         </ButtonPaper>
                     </View>
                 )}
