@@ -113,7 +113,7 @@ export const Room: React.FC<RoomProps> = ({ navigation, route }) => {
         })
 
         return () => {
-            // Desligar os listeners quando o componente for desmontado
+          
             socket.off("user-list")
             socket.off("new-answer")
             socket.off("game-data")

@@ -21,6 +21,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
     const [roomName, setRoomName] = useState("")
 
     const [privacy, setPrivacy] = useState("public")
+    const port = "http://192.168.15.25:3000"
 
     const maxHeight = Dimensions.get("window").height
     const maxWidth = Dimensions.get("window").width
@@ -38,7 +39,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
     // Criação de nova sala
     const createRoom = async () => {
         try {
-            const response = await axios.post("http://192.168.15.8:3000/create-room", {
+            const response = await axios.post(`${port}/create-room`, {
                 name: roomName,
                 privacy: privacy,
             })
@@ -52,7 +53,7 @@ export const Hall: React.FC<HallProps> = ({ navigation }) => {
     useEffect(() => {
         async function fetchRooms() {
             try {
-                const response = await axios.get("http://192.168.15.8:3000/rooms")
+                const response = await axios.get(`${port}/rooms`)
                 setRooms(response.data.rooms)
             } catch (error) {
                 console.error("Error fetching rooms:", rooms)

@@ -13,15 +13,12 @@ const IoContext = createContext<IoContextValue>({} as IoContextValue)
 export default IoContext
 
 // const io = ioSocket("ws://localhost:4104")
-const io = ioSocket("http://192.168.15.8:3000")
+const io = ioSocket("http://192.168.15.25:3000")
 
 export const IoProvider: React.FC<IoProviderProps> = ({ children }) => {
     useEffect(() => {
         io.once("connect_error", () => {
-            // snackbar({
-            //     severity: "error",
-            //     text: "Não foi possível se conectar com o servidor, verifique sua conexão com a internet",
-            // })
+            alert("Não foi possível se conectar com o servidor, verifique sua conexão com a internet")
         })
 
         io.on("connection", (message) => {

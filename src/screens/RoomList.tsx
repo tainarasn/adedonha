@@ -12,13 +12,14 @@ interface RoomListProps {
 
 export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
     const { username } = useUser()
-    const [rooms, setRooms] = useState<string[]>([]) // State to store the list of rooms
+    // const [rooms, setRooms] = useState<string[]>([]) // State to store the list of rooms
+    const [rooms, setRooms] = useState([{ id: "", name: "", users: [] }])
 
     // Fetch the list of rooms when the component mounts
     useEffect(() => {
         async function fetchRooms() {
             try {
-                const response = await axios.get("http://192.168.15.8:3000/rooms")
+                const response = await axios.get("http://192.168.15.25:3000/rooms")
                 setRooms(response.data.rooms)
             } catch (error) {
                 console.error("Error fetching rooms:", error)
@@ -28,7 +29,7 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
     }, [])
 
     return (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <View style={{ flex: 0.9, alignItems: "center", justifyContent: "center" }}>
             <Image source={images.studio} style={{ width: 120, height: 160, resizeMode: "center", alignItems: "center" }} />
 
             <Text
@@ -43,9 +44,9 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
                 SALAS DISPONÍVEIS
             </Text>
             <FlatList
-                style={{ width: "100%", paddingBottom: 20 }}
+                style={{ width: "100%", flex: 0.8, paddingBottom: 5 }}
                 data={rooms}
-                keyExtractor={(item) => item}
+                keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <TouchableOpacity style={{ padding: 10 }}>
                         <Button
@@ -55,11 +56,22 @@ export const RoomList: React.FC<RoomListProps> = ({ navigation }) => {
                             onPress={() => navigation.navigate("Room", { roomId: item })}
                             labelStyle={{ fontSize: 26, paddingTop: 6 }}
                         >
-                            {item}
+                            {item.name}
                         </Button>
                     </TouchableOpacity>
                 )}
             />
+            <Button
+                mode="contained"
+                style={{ width: "40%", borderRadius: 15 }}
+                buttonColor={colors.button2}
+                onPress={() => {
+                    navigation.navigate("Hall")
+                }}
+                labelStyle={{ fontSize: 20, paddingTop: 5 }}
+            >
+                Voltar
+            </Button>
         </View>
     )
 }
